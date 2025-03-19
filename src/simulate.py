@@ -38,12 +38,12 @@ class SimulationRunner:
                 
                 # Randomly select parameters
                 true_drift = np.random.uniform(0.5, 2.0)
-                true_limit = np.random.uniform(0.5, 2.0)
+                true_boundary = np.random.uniform(0.5, 2.0)
                 true_nondecision = np.random.uniform(0.1, 0.5)
                 
                 # Generate observed summary statistics
                 r_obs, m_obs, v_obs = self.ez.generate_observed_statistics(
-                    true_drift, true_limit, true_nondecision, n
+                    true_drift, true_boundary, true_nondecision, n
                 )
                 
                 # Recover parameters
@@ -52,11 +52,11 @@ class SimulationRunner:
                     
                     # Calculate bias and squared error
                     drift_bias = true_drift - est_params['drift_rate']
-                    limit_bias = true_limit - est_params['limit']
+                    boundary_bias = true_boundary - est_params['boundary']
                     nondecision_bias = true_nondecision - est_params['nondecision']
                     
                     drift_se = drift_bias ** 2
-                    limit_se = limit_bias ** 2
+                    boundary_se = boundary_bias ** 2
                     nondecision_se = nondecision_bias ** 2
                     
                     # Store results
@@ -64,16 +64,16 @@ class SimulationRunner:
                         'sample_size': n,
                         'iteration': i + 1,
                         'true_drift': true_drift,
-                        'true_limit': true_limit,
+                        'true_boundary': true_boundary,
                         'true_nondecision': true_nondecision,
                         'est_drift': est_params['drift_rate'],
-                        'est_limit': est_params['limit'],
+                        'est_boundary': est_params['boundary'],
                         'est_nondecision': est_params['nondecision'],
                         'drift_bias': drift_bias,
-                        'limit_bias': limit_bias,
+                        'boundary_bias': boundary_bias,
                         'nondecision_bias': nondecision_bias,
                         'drift_se': drift_se,
-                        'limit_se': limit_se,
+                        'boundary_se': boundary_se,
                         'nondecision_se': nondecision_se
                     })
                 except Exception as e:
@@ -83,16 +83,16 @@ class SimulationRunner:
                         'sample_size': n,
                         'iteration': i + 1,
                         'true_drift': true_drift,
-                        'true_limit': true_limit,
+                        'true_boundary': true_boundary,
                         'true_nondecision': true_nondecision,
                         'est_drift': np.nan,
-                        'est_limit': np.nan,
+                        'est_boundary': np.nan,
                         'est_nondecision': np.nan,
                         'drift_bias': np.nan,
-                        'limit_bias': np.nan,
+                        'boundary_bias': np.nan,
                         'nondecision_bias': np.nan,
                         'drift_se': np.nan,
-                        'limit_se': np.nan,
+                        'boundary_se': np.nan,
                         'nondecision_se': np.nan
                     })
         
@@ -106,10 +106,10 @@ class SimulationRunner:
         # Calculate summary statistics
         summary = results_df.groupby('sample_size').agg({
             'drift_bias': ['mean', 'std'],
-            'limit_bias': ['mean', 'std'],
+            'boundary_bias': ['mean', 'std'],
             'nondecision_bias': ['mean', 'std'],
             'drift_se': 'mean',
-            'limit_se': 'mean',
+            'boundary_se': 'mean',
             'nondecision_se': 'mean'
         })
         
