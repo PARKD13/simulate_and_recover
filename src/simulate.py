@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import time
-from src.ez_diffusion import EZ_diffusion
+from ez_diffusion import EZ_diffusion
 
 class SimulationResult:
     """Class to store simulation results."""
@@ -14,43 +14,41 @@ class SimulationRunner:
     def __init__(self, num_iterations=1000, sample_sizes=[10, 40, 4000]):
         self.num_iterations = num_iterations
         self.sample_sizes = sample_sizes
-        self.ez = EZ_Diffusion()
+        self.ez = EZ_diffusion()
 
     def run_simulations(self):
         """Run the simulate-and-recover process"""
         print(f"Running simulate-and-recover process with {self.num_iterations} iterations for each sample size")
         
-        # Initialize result storage
         results = []
         
-        # Start timer
         start_time = time.time()
         
-        # Run simulation for each sample size
+        # simulation for each sample size
         for n in self.sample_sizes:
             print(f"Processing sample size N = {n}")
             
             for i in range(self.num_iterations):
-                # Progress indicator every 100 iterations
+                # indicate every 100 iterations
                 if (i + 1) % 100 == 0:
                     elapsed = time.time() - start_time
                     print(f"  Iteration {i + 1}/{self.num_iterations} (Elapsed time: {elapsed:.2f}s)")
                 
-                # Randomly select parameters
+                # select parameters
                 true_drift = np.random.uniform(0.5, 2.0)
                 true_boundary = np.random.uniform(0.5, 2.0)
                 true_nondecision = np.random.uniform(0.1, 0.5)
                 
-                # Generate observed summary statistics
-                r_obs, m_obs, v_obs = self.ez.generate_observed_statistics(
+                # observed summary statistics
+                r_obs, m_obs, v_obs = self.ez.observed_statistics(
                     true_drift, true_boundary, true_nondecision, n
                 )
                 
-                # Recover parameters
+                # parameters
                 try:
                     est_params = self.ez.recover_parameters(r_obs, m_obs, v_obs)
                     
-                    # Calculate bias and squared error
+                    # calculate bias and squared error
                     drift_bias = true_drift - est_params['drift_rate']
                     boundary_bias = true_boundary - est_params['boundary']
                     nondecision_bias = true_nondecision - est_params['nondecision']
@@ -59,7 +57,6 @@ class SimulationRunner:
                     boundary_se = boundary_bias ** 2
                     nondecision_se = nondecision_bias ** 2
                     
-                    # Store results
                     results.append({
                         'sample_size': n,
                         'iteration': i + 1,
@@ -78,7 +75,7 @@ class SimulationRunner:
                     })
                 except Exception as e:
                     print(f"Error in iteration {i + 1} with N = {n}: {e}")
-                    # Store error case
+                    # error case
                     results.append({
                         'sample_size': n,
                         'iteration': i + 1,
@@ -96,14 +93,14 @@ class SimulationRunner:
                         'nondecision_se': np.nan
                     })
         
-        # Data frame for results
+        # results DataFrame
         results_df = pd.DataFrame(results)
         return results_df
     
         
     def analyze_results(self, results_df):
-        """Analyze results and generate summary statistics"""
-        # Calculate summary statistics
+        """analyze results and generate summary statistics"""
+        # summary statistics
         summary = results_df.groupby('sample_size').agg({
             'drift_bias': ['mean', 'std'],
             'boundary_bias': ['mean', 'std'],
@@ -118,10 +115,10 @@ class SimulationRunner:
             
         return summary
 
-def run_simulation(n_iterations=1000, sample_sizes=[10, 40, 4000]):
+def run_simulation(num_iterations=1000, sample_sizes=[10, 40, 4000]):
     """Run the simulate-and-recover process for EZ diffusion model."""
     # SimulationRunner execution
-    runner = SimulationRunner(n_iterations=n_iterations, sample_sizes=sample_sizes)
+    runner = SimulationRunner(num_iterations=num_iterations, sample_sizes=sample_sizes)
     results = runner.run_simulations()
     summary = runner.analyze_results(results)
     
