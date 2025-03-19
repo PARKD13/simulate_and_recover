@@ -1,6 +1,3 @@
-#Run the EZ Diffusion simulate-and-recover exercise
-#AI helped with code
-
 echo "Starting EZ Diffusion Model Simulate-and-Recover Program"
 echo "--------------------------------------------------------"
 echo "This program will execute 1000 iterations for each sample size 10, 40, and 4000"
