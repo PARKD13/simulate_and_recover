@@ -100,21 +100,22 @@ class SimulationRunner:
         results_df = pd.DataFrame(results)
         return results_df
     
-        def analyze_results(self, results_df):
-            """Analyze results and generate summary statistics"""
-            # Calculate summary statistics
-            summary = results_df.groupby('sample_size').agg({
-                'drift_bias': ['mean', 'std'],
-                'limit_bias': ['mean', 'std'],
-                'nondecision_bias': ['mean', 'std'],
-                'drift_se': 'mean',
-                'limit_se': 'mean',
-                'nondecision_se': 'mean'
-            })
+        
+    def analyze_results(self, results_df):
+        """Analyze results and generate summary statistics"""
+        # Calculate summary statistics
+        summary = results_df.groupby('sample_size').agg({
+            'drift_bias': ['mean', 'std'],
+            'limit_bias': ['mean', 'std'],
+            'nondecision_bias': ['mean', 'std'],
+            'drift_se': 'mean',
+            'limit_se': 'mean',
+            'nondecision_se': 'mean'
+        })
         
         print("\nSummary of Results:")
         print(summary)
-        
+            
         return summary
 
 def run_simulation(n_iterations=1000, sample_sizes=[10, 40, 4000]):

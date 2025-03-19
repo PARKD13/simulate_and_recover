@@ -63,3 +63,4 @@ class EZ_diffusion:
         nondecision = meanRT - decision_time
 
         return nondecision
+    
