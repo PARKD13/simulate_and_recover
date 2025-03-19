@@ -4,10 +4,10 @@ echo "This program will execute 1000 iterations for each sample size 10, 40, and
 echo "Total: 3000 iterations"
 echo ""
 
-# Python ver
+# Python version
 PYTHON_CMD="python3.12"
 
-# Verify Python version
+# verify Python version
 $PYTHON_CMD --version
 if [ $? -ne 0 ]; then
     echo "Error: Python 3.12.3 is not available as 'python3.12'. Trying different path..."
@@ -20,10 +20,10 @@ if [ $? -ne 0 ]; then
         echo "Error: Python 3.12.3 is not found. Please install."
         exit 1
 
-# Create a results directory if it doesn't exist
+# create a results directory if it doesn't exist
 mkdir -p results
 
-# Run the Python script
+# run the Python script
 $PYTHON_CMD -c "
 import numpy as np
 import os
@@ -39,7 +39,7 @@ if not (sys.version_info.major == 3 and sys.version_info.minor == 12):
 os.makedirs('results', exist_ok=True)
 
 # Initialize the simulation runner with 1000 iterations for each sample size
-runner = SimulationRunner(n_iterations=1000, sample_sizes=[10, 40, 4000])
+runner = SimulationRunner(num_iterations=1000, sample_sizes=[10, 40, 4000])
 
 # run simulations
 results = runner.run_simulations()
@@ -57,19 +57,19 @@ for n in [10, 40, 4000]:
     
     # biases
     drift_bias = subset['drift_bias'].mean()
-    limit_bias = subset['limit_bias'].mean()
+    boundary_bias = subset['boundary_bias'].mean()
     nondecision_bias = subset['nondecision_bias'].mean()
     
     # squared errors
     drift_se = subset['drift_se'].mean()
-    limit_se = subset['limit_se'].mean() 
+    boundary_se = subset['boundary_se'].mean() 
     nondecision_se = subset['nondecision_se'].mean()
     
     # write to file in the results directory
     with open(f'results/results_N{n}.txt', 'w') as main_file:
         main_file.write(f'N={n}\\n')
-        main_file.write(f'Biases(v, a, t): [{drift_bias:.8f} {limit_bias:.8f} {nondecision_bias:.8f}]\\n')
-        main_files.write(f'Squared Errors(v, a, t): [{drift_se:.8f} {limit_se:.8f} {nondecision_se:.8f}]\\n')
+        main_file.write(f'Biases(v, a, t): [{drift_bias:.8f} {boundary_bias:.8f} {nondecision_bias:.8f}]\\n')
+        main_files.write(f'Squared Errors(v, a, t): [{drift_se:.8f} {boundary_se:.8f} {nondecision_se:.8f}]\\n')
 
 print('\\nResults saved to the results directory.')
 "
